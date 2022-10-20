@@ -1,0 +1,25 @@
+version: "3.7"
+services:
+  nginx:
+    build: ./nginx
+    depends_on:
+      - php-fpm
+    volumes:
+      - ../:/usr/share/nginx/html:rw
+      - ./nginx/templates:/etc/nginx/templates
+      - ./logs/nginx:/var/log/nginx
+    ports:
+      - "8080:80"
+    environment:
+      - NGINX_HOST=${NGINX_HOST}
+      - NGINX_PORT=80
+    restart: always
+  php-fpm:
+    build:
+      context: ./php-fpm
+      args:
+        - APP_CODE_PATH=${APP_CODE_PATH}
+    environment:
+      PHP_IDE_CONFIG: serverName=${NGINX_HOST}
+    volumes:
+      - ../:/usr/share/nginx/html:rw
